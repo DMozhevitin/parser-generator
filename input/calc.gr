@@ -1,0 +1,44 @@
+grammar Calculator
+
+attributes <value: Int;>
+
+addExp
+    : mulExp addExpTail(mulExp.value) { res.value = addExpTail.value }
+    ;
+
+addExpTail<acc: Int>
+    : EPSILON { res.value = acc }
+    | PLUS mulExp addExpTail(acc + mulExp.value) { res.value = addExpTail.value }
+    ;
+
+mulExp
+    : negExp mulExpTail(negExp.value) { res.value = mulExpTail.value }
+    ;
+
+mulExpTail<acc: Int>
+    : EPSILON { res.value = acc }
+    | MUL negExp mulExpTail(acc * negExp.value) { res.value = mulExpTail.value }
+    ;
+
+negExp
+    : MINUS negExp { res.value = -negExp.value }
+    | NUMBER { res.value = context.text.toInt }
+    | OPEN addExp CLOSE { res.value = addExp.value }
+    ;
+
+WHITESPACES : "[\n\r\t ]+" -> skip;
+NUMBER : "\d+(\.\d+)?";
+OPEN : "\(";
+CLOSE : "\)";
+OR : "\|";
+AND : "&";
+XOR : "\^";
+NOT : "!";
+TRUE : "true";
+FALSE : "false";
+PLUS : "\+";
+MUL : "\*";
+MINUS : "-";
+EXP : "exp";
+COS : "cos";
+SIN : "sin";

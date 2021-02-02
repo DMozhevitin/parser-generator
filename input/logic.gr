@@ -1,0 +1,38 @@
+grammar Logic
+
+
+orExp
+    : andExp orExpTail(andExp.value) { res.value = orExpTail.value }
+    ;
+
+orExpTail<boolean acc>
+    : EPSILON { res.value = acc }
+    | OR andExp orExpTail(acc | andExp.value) { res.value = orExpTail.value }
+    ;
+
+andExp
+    : notExp andExpTail(notExp.value) { res.value = andExpTail.value }
+    ;
+
+andExpTail<boolean acc>
+    : EPSILON { res.value = acc }
+    | AND notExp andExpTail(acc & notExp.value) { res.value = andExpTail.value }
+    ;
+
+notExp
+    : NOT notExp { res.value = ! notExp.value }
+    | TRUE { res.value = true}
+    | FALSE { res.value = false }
+    | OPEN orExp CLOSE { res.value = orExp.value }
+    ;
+
+WHITESPACES : "[\n\r\t ]+" -> skip;
+NUMBER : "\d+(\.\d+)?";
+OPEN : "\(";
+CLOSE : "\)";
+OR : "\|";
+AND : "&";
+XOR : "\^";
+NOT : "!";
+TRUE : "true";
+FALSE : "false";
